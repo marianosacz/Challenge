@@ -1,3 +1,4 @@
+using Challenge.Data;
 using Challenge.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -45,14 +46,21 @@ namespace Challenge
                     foreach (Product product in products.products)
                     {
                         _logger.LogInformation($"Code: {product.code}, Sku: {product.sku}, Stock: {product.stock}, Currency: {product.currency}, Price: {product.price}, Iva: {product.iva}, Ii: {product.ii}");
+
+                        ProductData.Registrar(product);//Guarda los datos
                     }
+
+                    
+
                 }
+                
                 else
                 {
                     _logger.LogInformation($"Error al consumir Api {response.StatusCode}");
                 }
             }
         }
+
 
     }
 }
