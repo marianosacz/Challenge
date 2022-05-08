@@ -1,8 +1,8 @@
 # Challenge
-#### Introducción
-Este proyecto esta basado en C# utilizando librerias  .Net Framework version 4.7.2 para la creacion del servicio, Newtonsoft.json para poder deserializar la informacion obtenida desde la API publica proporcionada para el Challenge.  Tambien se utilizar el paquete Microsoft.Data.SqlClient para la conexion a la base datos local. 
+### Introducción
+Este proyecto esta basado en C# utilizando librerias  .Net Framework version 4.7.2 para la creacion del servicio, Newtonsoft.json para poder deserializar la informacion obtenida desde la API publica proporcionada.  Tambien se utilizar el paquete Microsoft.Data.SqlClient para la conexion a la base datos local. 
 
-#### Ruta de conexion a base de datos
+### Ruta de conexion a base de datos
 
 Dentro del proyecto, en la clase Conexion.cs se podra configurar la ruta hacia la BD local en la que queremos volcar los datos de los productos.
 
@@ -10,7 +10,7 @@ Dentro del proyecto, en la clase Conexion.cs se podra configurar la ruta hacia l
 
 *NOTA: Database Security Server hace no Valide el certificado cuando TrustServerCertificate=True. Esto era necesario ya que no me dejaba alojar los datos en la BD*
 
-#### Creación de la base de datos local y la tabla
+### Creación de la base de datos local y la tabla
 
 Para crear la base local en la cual vamos a volcar los datos de que la API nos provee necesitamos ejecutar en SQL Server Managment lo siguiente:
 ```sql
@@ -42,7 +42,7 @@ go
 select * from dbo.product
 ```
 
-####Creacion de los SP: registrar - actualizar - obtener - listar - eliminar
+### Creacion de los SP: registrar - actualizar - obtener - listar - eliminar
 El siguiente codigo sirve para la creacion de los SP dentro de la base DBPRUEBAS que en el caso de que ya existan los eliminara y volvera a crear 
 
 ```sql
@@ -169,14 +169,14 @@ end
 
 go
 ```
-####Resultados
+### Resultados
 
 Si el servicio fue ejecutado correctamente, en la base de datos local podremos visualizar los datos cargados en la tabla PRODUCT mediante la siguiente consulta:
 ```sql
 select * from product
 ```
 
-####Configuracion de intervalos de ejecución
+### Configuracion de intervalos de ejecución
 Para que el servicio sea configurable para ser ejecutado cada cierto tiempo de forma automática, en la clase Worker.cs  se puede modificar el siguiente metodo: 
 
 ```csharp
@@ -190,7 +190,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
             }
         }
 ```
-####Insertar o actualizar productos
+### Insertar o actualizar productos
 
 Para insertar o actualizar un producto, se dispone tanto del SP registrar y tambien actualizar, los cuales pueden ser llamados desde la clase Worker en el metodo GetProduct(), dentro del foreach donde se recorre la lista de productos
 
