@@ -37,11 +37,11 @@ namespace Challenge.Data
             }
         }
 
-        public static bool Modificar(Product product)
+        public static bool Actualizar(Product product)
         {
             using (SqlConnection oConexion = new SqlConnection(Conexion.rutaConexion))
             {
-                SqlCommand cmd = new SqlCommand("usp_modificar", oConexion);
+                SqlCommand cmd = new SqlCommand("usp_actualizar", oConexion);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@code", product.code);
                 cmd.Parameters.AddWithValue("@sku", product.sku);

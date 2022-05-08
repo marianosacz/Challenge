@@ -27,7 +27,7 @@ namespace Challenge
             {
                 // _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 GetProduct();
-                await Task.Delay(1000000, stoppingToken);
+                await Task.Delay(600000, stoppingToken); // 10 minutos = 600000 milisegundos
             }
         }
 
@@ -48,6 +48,7 @@ namespace Challenge
                         _logger.LogInformation($"Code: {product.code}, Sku: {product.sku}, Stock: {product.stock}, Currency: {product.currency}, Price: {product.price}, Iva: {product.iva}, Ii: {product.ii}");
 
                         ProductData.Registrar(product);//Guarda los datos
+                        ProductData.Actualizar(product);
                     }
 
                     
