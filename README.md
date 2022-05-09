@@ -10,6 +10,15 @@ Dentro del proyecto, en la clase Conexion.cs se podra configurar la ruta hacia l
 
 *NOTA: Database Security Server hace no Valide el certificado cuando TrustServerCertificate=True. Esto era necesario ya que no me dejaba alojar los datos en la BD*
 
+### Como consumir la API 
+
+URL : [https://apilab.distecna.com/Product](https://apilab.distecna.com)
+Parametros: x-apikey 
+Valor: 081ae9a0-bb54-4621-8475-9e49f18d2413
+
+### Comando para consumir api desde cualquier consola
+`curl -X GET "https://api.distecna.com/Product" -H  "accept: text/plain" -H  "x-apikey: 081ae9a0-bb54-4621-8475-9e49f18d2413"`
+
 ### Creación de la base de datos local y la tabla
 
 Para crear la base local en la cual vamos a volcar los datos de que la API nos provee necesitamos ejecutar en SQL Server Managment lo siguiente:
@@ -169,15 +178,50 @@ end
 
 go
 ```
-### Resultados
+### Resultados en la BD
 
-Si el servicio fue ejecutado correctamente, en la base de datos local podremos visualizar los datos cargados en la tabla PRODUCT mediante la siguiente consulta:
+Si el servicio fue ejecutado correctamente, en la base de datos local podremos visualizar los datos cargados en la tabla PRODUCT mediante la siguiente consulta apuntando a DBPRUEBAS:
 ```sql
 select * from product
 ```
+### Solicitud al Web Service
+En la clase Worker.cs obtenemos los datos que nos brinda la API de la siguiente forma.  Primero se llamamos a la clase HttpClient para hacer las conexiones y luego de esa clase utilizamos el método  GetAsync para hacer la peticion al webService junto con el parametro que tambien tomamos del método client para enviarselo junto con el método Get. Posteriomente si la respuesta es satisfactoria se utilizara la clase ProductListResponse para crear una lista con los productos Deserializados gracias al JsonConvert. Una vez que se termina de armar la lista se recorre la misma producto por producto y en cada iteracion se iran agregando o actualizando los productos segun corresponda.
+
+En caso de no tener un response satisfactorio el mismo se imprime por consola con un mensaje: "Error al consumir Api {response.StatusCode}"
+
+```csharp
+private async void GetProduct()
+        {   
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("x-apikey", "081ae9a0-bb54-4621-8475-9e49f18d2413");
+                var response = await client.GetAsync("https://apilab.distecna.com/Product");
+                if (response.IsSuccessStatusCode)
+                {
+                    //_logger.LogInformation(await response.Content.ReadAsStringAsync());
+
+                    ProductListResponse products = JsonConvert.DeserializeObject<ProductListResponse>(await response.Content.ReadAsStringAsync());
+                    foreach (Product product in products.products)
+                    {
+                        _logger.LogInformation($"Code: {product.code}, Sku: {product.sku}, Stock: {product.stock}, Currency: {product.currency}, Price: {product.price}, Iva: {product.iva}, Ii: {product.ii}");
+
+                        ProductData.Registrar(product);//Guarda los datos
+                        ProductData.Actualizar(product);
+                    }
+
+                }
+                
+                else
+                {
+                    _logger.LogInformation($"Error al consumir Api {response.StatusCode}");
+                }
+            }
+        }
+```
 
 ### Configuracion de intervalos de ejecución
-Para que el servicio sea configurable para ser ejecutado cada cierto tiempo de forma automática, en la clase Worker.cs  se puede modificar el siguiente metodo: 
+Para que el servicio sea configurable para ser ejecutado cada cierto tiempo de forma automática, en la clase Worker.cs  se puede modificar el siguiente método: 
 
 ```csharp
 protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -192,7 +236,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 ```
 ### Insertar o actualizar productos
 
-Para insertar o actualizar un producto, se dispone tanto del SP registrar y tambien actualizar, los cuales pueden ser llamados desde la clase Worker en el metodo GetProduct(), dentro del foreach donde se recorre la lista de productos
+Para insertar o actualizar un producto, se dispone tanto del SP registrar y tambien actualizar, los cuales pueden ser llamados desde la clase Worker en el método GetProduct(), dentro del foreach donde se recorre la lista de productos
 
 ```csharp
 foreach (Product product in products.products)
@@ -202,4 +246,6 @@ foreach (Product product in products.products)
 	ProductData.Registrar(product);//Guarda los datos
 	ProductData.Actualizar(product);
 }
+
+
 ```
