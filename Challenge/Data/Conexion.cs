@@ -7,6 +7,6 @@ namespace Challenge.Data
 {
     public class Conexion
     {
-        public static string rutaConexion = @"Data Source=DESKTOP-QR03L4E;Initial Catalog=DBPRUEBAS;Integrated Security=True;TrustServerCertificate=True";
+        public static string rutaConexion = @"Data Source=BP4-W-122\SQLEXPRESS;Initial Catalog=DBPRUEBAS;User ID=test;TrustServerCertificate=True";
     }
 }
